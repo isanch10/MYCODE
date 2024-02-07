@@ -1,0 +1,41 @@
+# Dictionary of Marvel characters
+marvelchars = {
+    "Starlord": {
+        "real name": "peter quill",
+        "powers": "dance moves",
+        "archenemy": "Thanos"
+    },
+    "Mystique": {
+        "real name": "raven darkholme",
+        "powers": "shape shifter",
+        "archenemy": "Professor X"
+    },
+    "Hulk": {
+        "real name": "bruce banner",
+        "powers": "super strength",
+        "archenemy": "adrenaline"
+    }
+}
+
+# Get user input for character name
+char_name = input("Which character do you want to know about? (Starlord, Mystique, Hulk): ")
+
+# Validate the input
+while char_name not in marvelchars:
+    print("Invalid character name. Please choose from Starlord, Mystique, or Hulk.")
+    char_name = input("Which character do you want to know about? (Starlord, Mystique, Hulk): ")
+
+# Get user input for character statistic
+char_stat = input("What statistic do you want to know about? (real name, powers, archenemy): ")
+
+# Validate the input
+while char_stat not in marvelchars[char_name]:
+    print("Invalid statistic. Please choose from real name, powers, or archenemy.")
+    char_stat = input("What statistic do you want to know about? (real name, powers, archenemy): ")
+
+# Access the dictionary to get the requested value
+value = marvelchars[char_name][char_stat]
+
+# Print the result
+print(f"{char_name}'s {char_stat} is: {value}")
+
