@@ -1,0 +1,33 @@
+# Welcome message
+print("Welcome to the Color Fortune Teller!")
+print("Answer the following question to discover your fortune.")
+
+# Prompt the user to enter their favorite color
+color = input("What is your favorite color? ")
+
+# Determine the fortune based on the user's favorite color
+if color.lower() == "red":
+    print("You will lose a fight to a man with no arms. he is a taekwondo blackbelt!")
+elif color.lower() == "blue":
+    print("Youre gonna win the lotto! BUT youll lose the ticket.")
+elif color.lower() == "green":
+    print("you will have waffles for breakfast. How lucky!")
+elif color.lower() == "yellow":
+    print("If you miss your dead relatives go the a graveyard and say Kunda astratta montose eargrets gutt nos veratoos Kanda amantos Kanda!")
+elif color.lower() == "black":
+    print("you are actually asleep and you're late for firewatch!")
+elif color.lower() == "white":
+    print("this fortune is DLC please pay $4.99 to unlock this fortune.")
+elif color.lower() == "orange":
+    print("Come on dont lie to me nobody's favorite color is orange.")
+elif color.lower() == "purple":
+    print("you will do something exciting and dangerous. you should wear brown pants.")
+elif color.lower() == "gold":
+    print("the cheifs will lose the superbowl! unless the referees help!")
+elif color.lower() == "pink":
+    print("soon you will prove you have the heart of a lion, shortly after you will be arrested for killing a lion and being weird")
+else:
+    print("The cake is a lie and so is your favorite color!")
+
+# Farewell message
+print("Thank you for visiting the Color Fortune Teller! Have a wonderful day!")
