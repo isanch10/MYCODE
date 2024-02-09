@@ -13,7 +13,7 @@ elif color.lower() == "blue":
 elif color.lower() == "green":
     print("you will have waffles for breakfast. How lucky!")
 elif color.lower() == "yellow":
-    print("If you miss your dead relatives go the a graveyard and say Kunda astratta montose eargrets gutt nos veratoos Kanda amantos Kanda!")
+    print("If you miss your dead relatives go to a graveyard and say Kunda astratta montose eargrets gutt nos veratoos Kanda amantos Kanda!")
 elif color.lower() == "black":
     print("you are actually asleep and you're late for firewatch!")
 elif color.lower() == "white":
