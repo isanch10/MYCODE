@@ -1,0 +1,150 @@
+import random
+
+# Define card ranks, suits, and values
+ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11}
+
+import time
+
+# Define the slow_display function
+def slow_display(text, delay=0.03):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
+
+class Card:
+    def __init__(self, rank, suit):
+        self.rank = rank
+        self.suit = suit
+
+    def __str__(self):
+        return f"{self.rank} of {self.suit}"
+
+class Deck:
+    def __init__(self, num_decks=6):
+        self.cards = [Card(rank, suit) for _ in range(num_decks) for rank in ranks for suit in suits]
+        self.shuffle()
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+    def deal_card(self):
+        return self.cards.pop()
+
+class Hand:
+    def __init__(self):
+        self.cards = []
+        self.value = 0
+        self.aces = 0
+
+    def add_card(self, card):
+        self.cards.append(card)
+        self.value += values[card.rank]
+        if card.rank == 'A':
+            self.aces += 1
+
+    def adjust_for_ace(self):
+        while self.value > 21 and self.aces:
+            self.value -= 10
+            self.aces -= 1
+
+def place_bet(balance):
+    while True:
+        try:
+            bet = int(input(f"Place your bet (Current balance: {balance}): "))
+            if bet > balance:
+                print("Insufficient balance. Please place a valid bet.")
+            else:
+                return bet
+        except ValueError:
+            print("Invalid input. Please enter a valid bet.")
+
+def show_some(player, dealer):
+    print("\nDealer's Hand:")
+    print(" <card hidden>")
+    print('', dealer.cards[1])
+    print("\nPlayer's Hand:", *player.cards, sep='\n ')
+
+def show_all(player, dealer):
+    print("\nDealer's Hand:", *dealer.cards, sep='\n ')
+    print("Dealer's Hand =", dealer.value)
+    print("\nPlayer's Hand:", *player.cards, sep='\n ')
+    print("Player's Hand =", player.value)
+    print("Total Value of Player's Hand:", player.value)
+
+def player_busts():
+    print("Player busts!")
+
+def player_wins():
+    print("Player wins!")
+
+def dealer_busts():
+    print("Dealer bust! I’m so embarrassed. I wish everybody else was dead!")
+
+def dealer_wins():
+    print("Dealer wins! As Bender would say: 'You know what always cheers me up? Laughing at other people's misfortunes'")
+
+def play_blackjack():
+    balance = 1000
+    num_decks = 6
+
+    while balance > 0:
+        print("\nNew round begins!")
+        deck = Deck(num_decks)
+        player_hand = Hand()
+        dealer_hand = Hand()
+        bet = place_bet(balance)
+
+        # Deal initial cards
+        player_hand.add_card(deck.deal_card())
+        dealer_hand.add_card(deck.deal_card())
+        player_hand.add_card(deck.deal_card())
+        dealer_hand.add_card(deck.deal_card())
+
+        # Show cards
+        show_some(player_hand, dealer_hand)
+
+        # Player's turn
+        while True:
+            action = input("Do you want to hit or stand? (h/s): ").lower()
+            if action == 'h':
+                player_hand.add_card(deck.deal_card())
+                player_hand.adjust_for_ace()
+                show_some(player_hand, dealer_hand)
+                if player_hand.value > 21:
+                    player_busts()
+                    break
+            else:
+                break
+
+        if player_hand.value <= 21:
+            # Dealer's turn
+            while dealer_hand.value < 17:
+                dealer_hand.add_card(deck.deal_card())
+                dealer_hand.adjust_for_ace()
+
+            # Show all cards
+            show_all(player_hand, dealer_hand)
+
+            # Determine the winner
+            if dealer_hand.value > 21:
+                dealer_busts()
+                balance += bet
+            elif dealer_hand.value > player_hand.value:
+                dealer_wins()
+                balance -= bet
+            elif dealer_hand.value < player_hand.value:
+                player_wins()
+                balance += bet
+            else:
+                print("It's a tie!")
+
+        print(f"Current balance: {balance}")
+    
+    print("Game’s over, losers! I have all the money. Compare your lives to mine and weep!")
+
+if __name__ == "__main__":
+    play_blackjack()
+
