@@ -1,0 +1,195 @@
+import time
+import random
+
+# Global variables
+suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9, 'Ten': 10,
+          'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
+bender_quotes_win = ["I'm so great! Hey, you were lucky. That's my only weakness! Well, that and knives."], ["My story is a lot like yours, only more interesting ‘cause it involves robots"] 
+bender_quotes_lose = ["Bite my shiny metal a**, meatbag!"], ["I'm so embarrassed I  wish everyone else was dead!"]
+
+class Card:
+    def __init__(self, suit, rank):
+        self.suit = suit
+        self.rank = rank
+
+    def __str__(self):
+        return self.rank + ' of ' + self.suit
+
+class Deck:
+    def __init__(self, num_decks=1):
+        self.deck = []
+        for _ in range(num_decks):
+            for suit in suits:
+                for rank in ranks:
+                    self.deck.append(Card(suit, rank))
+
+    def shuffle(self):
+        print("Shuffling the deck...")
+        time.sleep(2)
+        random.shuffle(self.deck)
+
+    def deal_card(self):
+        return self.deck.pop()
+
+class Hand:
+    def __init__(self):
+        self.cards = []
+        self.value = 0
+        self.aces = 0
+
+    def add_card(self, card):
+        self.cards.append(card)
+        self.value += values[card.rank]
+        if card.rank == 'Ace':
+            self.aces += 1
+
+    def adjust_for_ace(self):
+        while self.value > 21 and self.aces:
+            self.value -= 10
+            self.aces -= 1
+
+def take_bet(chips):
+    while True:
+        try:
+            bet = int(input("How many chips would you like to bet? "))
+            if bet > chips:
+                print("Sorry, you don't have enough chips!")
+            else:
+                return bet
+        except ValueError:
+            print("Please enter a valid number.")
+
+def hit(deck, hand):
+    hand.add_card(deck.deal_card())
+    hand.adjust_for_ace()
+
+def show_some(player, dealer):
+    print("\nDealer's Hand:")
+    print(" <card hidden>")
+    print("", dealer.cards[1])
+    print("\nPlayer's Hand:")
+    for card in player.cards:
+        print(card)
+    print("Total value of player's hand:", player.value)
+
+def show_all(player, dealer):
+    print("\nDealer's Hand:")
+    for card in dealer.cards:
+        print(card)
+    print("Dealer's Hand =", dealer.value)
+    print("\nPlayer's Hand:")
+    for card in player.cards:
+        print(card)
+    print("Player's Hand =", player.value)
+
+def player_busts(chips):
+    print("Player busts!")
+    print(random.choice(bender_quotes_lose))
+    chips.lose_bet()
+
+def player_wins(chips):
+    print("Player wins!")
+    print(random.choice(bender_quotes_win))
+    chips.win_bet()
+
+def dealer_busts(chips):
+    print("Dealer busts! Player wins!")
+    print(random.choice(bender_quotes_win))
+    chips.win_bet()
+
+def dealer_wins(chips):
+    print("Dealer wins!")
+    print(random.choice(bender_quotes_lose))
+    chips.lose_bet()
+
+def push():
+    print("Dealer and Player tie! It's a push.")
+
+class Chips:
+    def __init__(self, total=100):
+        self.total = total
+        self.bet = 0
+
+    def win_bet(self):
+        self.total += self.bet
+
+    def lose_bet(self):
+        self.total -= self.bet
+
+# Game logic
+def blackjack_game():
+    print("Allow me to introduce myself. I’m Bender and this is blackjack!")
+    playing = True
+
+    while True:
+        # Initialize deck and player's chips
+        deck = Deck(num_decks=2)
+        deck.shuffle()
+        player_chips = Chips()
+
+        while playing:
+            # Take player's bet
+            print(f"\nYou have {player_chips.total} chips.")
+            player_bet = take_bet(player_chips.total)
+
+            # Initialize player and dealer hands
+            player_hand = Hand()
+            dealer_hand = Hand()
+            player_hand.add_card(deck.deal_card())
+            dealer_hand.add_card(deck.deal_card())
+            player_hand.add_card(deck.deal_card())
+            dealer_hand.add_card(deck.deal_card())
+
+            # Show cards
+            show_some(player_hand, dealer_hand)
+
+            while True:
+                # Player's turn
+                hit_or_stand = input("\nWould you like to hit or stand? Enter 'h' or 's': ")
+                if hit_or_stand.lower() == 'h':
+                    hit(deck, player_hand)
+                    show_some(player_hand, dealer_hand)
+                    if player_hand.value > 21:
+                        player_busts(player_chips)
+                        break
+                elif hit_or_stand.lower() == 's':
+                    break
+
+            if player_hand.value <= 21:
+                # Dealer's turn
+                while dealer_hand.value < 17:
+                    hit(deck, dealer_hand)
+
+                # Show all cards
+                show_all(player_hand, dealer_hand)
+
+                # Determine winner
+                if dealer_hand.value > 21:
+                    dealer_busts(player_chips)
+                elif dealer_hand.value > player_hand.value:
+                    dealer_wins(player_chips)
+                elif dealer_hand.value < player_hand.value:
+                    player_wins(player_chips)
+                else:
+                    push()
+
+            print("\nPlayer's chips stand at", player_chips.total)
+
+            # Ask to play again
+            play_again = input("Would you like to play again? Enter 'y' or 'n': ")
+            if play_again.lower() == 'n':
+                print("Game’s over, losers! I have all the money. Compare your lives to mine and then weep.!")
+                playing = False
+                break
+
+            # Clear hands
+            player_hand.cards.clear()
+            dealer_hand.cards.clear()
+
+        if not playing:
+            break
+
+blackjack_game()
+
